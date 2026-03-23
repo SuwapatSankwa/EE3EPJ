@@ -19,8 +19,8 @@ while True:
     if not ret:
         break
 
-    # Convert frame from RGB colour space to HSV
-    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
+    # Convert frame from BGR colour space to HSV
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Define HSV Colour Ranges
     red_lower = np.array([0, 120, 70])
@@ -29,10 +29,10 @@ while True:
     green_lower = np.array([36, 50, 70])
     green_upper = np.array([89, 255, 255])
 
-    dblue_lower = np.array([111, 50, 70])
+    dblue_lower = np.array([110, 50, 40])
     dblue_upper = np.array([130, 255, 255])
-
-    lblue_lower = np.array([90, 50, 70])
+    
+    lblue_lower = np.array([255, 200, 140])
     lblue_upper = np.array([110, 255, 255])
 
     yellow_lower = np.array([20, 100, 100])

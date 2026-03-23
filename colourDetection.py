@@ -1,10 +1,8 @@
-import cv2                  # OpenCV library for computer vision
+import cv2  # OpenCV library
 import numpy as np
 
-# Open camera (0 = default camera)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)   # Open camera (0 = default camera)
 
-# Check if camera opened successfully
 if not cap.isOpened():
     print("ERROR: Camera not opened")
     exit()
@@ -13,21 +11,18 @@ if not cap.isOpened():
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-# Store previous detected color
-prev_color = "None"
+prev_color = "None" # Store previous detected color
 
 # Define Region Of Interest (ROI)
 roi_x1, roi_y1 = 200, 150
 roi_x2, roi_y2 = 440, 330
 
 while True:
-    # Capture frame-by-frame
     ret, frame = cap.read()
     if not ret:
         break
-
-    # Convert frame from RGB colour space to HSV
-    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
+    
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)    # Convert BGR to HSV
 
     # Define HSV Colour Ranges
     red_lower = np.array([0, 120, 70])
@@ -36,10 +31,10 @@ while True:
     green_lower = np.array([36, 50, 70])
     green_upper = np.array([89, 255, 255])
 
-    dblue_lower = np.array([111, 50, 70])
+    dblue_lower = np.array([111, 50, 40])
     dblue_upper = np.array([130, 255, 255])
 
-    lblue_lower = np.array([90, 50, 70])
+    lblue_lower = np.array([255, 200, 140])
     lblue_upper = np.array([110, 255, 255])
 
     yellow_lower = np.array([20, 100, 100])
@@ -70,16 +65,13 @@ while True:
     largest_area = 0
     best_box = None
 
-    # Find Largest Object
     for color, mask in masks.items():
-        # Find shapes in the mask
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         
         for cnt in contours:
             area = cv2.contourArea(cnt)
             
             if area > 3000 and area > largest_area:
-                # Get bounding box
                 x, y, w, h = cv2.boundingRect(cnt)
                 
                 # Check if inside detection zone
@@ -88,28 +80,24 @@ while True:
                     detected_color = color
                     best_box = (x, y, w, h)
     
-    # Draw Result
     if best_box is not None:
         x, y, w, h = best_box
         cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
         cv2.putText(frame, detected_color,(x,y-10),
                     cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,255,0),2)
 
-    # Draw ROI Box
     cv2.rectangle(frame,(roi_x1,roi_y1),(roi_x2,roi_y2),(255,0,0),2)
 
     # Print only when color changes
     if detected_color != prev_color:
         print("Detected:", detected_color)
         prev_color = detected_color
-    
-    # Show live video feed
-    cv2.imshow("Frame", frame)
 
-    # Press 'x' to exit program
+    cv2.imshow("Frame", frame)  # Show live video feed
+
     if cv2.waitKey(1) & 0xFF == ord('x'):
         break
 
-cap.release()              # Release camera
-cv2.destroyAllWindows()    # Close all windows
+cap.release()
+cv2.destroyAllWindows()
 exit()
