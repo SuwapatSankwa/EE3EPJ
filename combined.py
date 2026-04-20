@@ -72,7 +72,7 @@ while True:
                 detected_color = color
 
     # Cooldown + Action
-    current_time = time.time()
+    current_time = time.time()   
 
     if detected_color != "None" and (current_time - last_action_time > COOLDOWN):
         print("Detected:", detected_color)
